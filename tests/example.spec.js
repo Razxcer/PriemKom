@@ -97,7 +97,7 @@ test('testForState', async ({page}) => {
   await page.waitForResponse(r => r.status() === 200);
 
   //Пробегаем первую таблицу (50 - максимум)
-  for(let i=0;i<10;i++){
+  for(let i=0;i<20;i++){
     const num = await page.locator('tbody').locator('tr').nth(i).locator('td').nth(2).innerText();
     if(nums.find(numb => numb.trim() == num.trim())){
 
