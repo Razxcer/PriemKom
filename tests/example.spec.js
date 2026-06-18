@@ -172,15 +172,14 @@ test('testForState', async ({page}) => {
       else{
         
       }
-
-      if(i==49){
-        await page.locator('.ui-iggrid-nextpagelabel').click();
-        await page.waitForResponse(r => r.status() === 200);
-        currentPage+=1;
-        i=0;
-      }
       
-      
+    }
+    
+    if(i==49){
+      await page.locator('.ui-iggrid-nextpagelabel').click();
+      await page.waitForResponse(r => r.status() === 200);
+      currentPage+=1;
+      i=0;
     }
     
   }
