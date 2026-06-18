@@ -35,15 +35,17 @@ async function accessGooglesheet() {
   await sheet.addRow({ Name: 'Ivan', Age: 28 });
 }
 
-test('test', async ({page}) => {
-  const doc = await accessGooglesheet();
-  const Reestr = doc.sheetsByIndex[0];
+test('clearDB', async ({page}) => {
 
-  const rows = await Reestr.getRows(); 
-  console.log(rows[0].get('Name')); // Доступ к данным по заголовкам колонок
 
-  await Reestr.addRow({ Name: 'Ivan' , ФИО: "Работает ы 2 513251" });
+const db = open({
+  path: 'UniqueNums.db',
+  compression: true,
+});
+  
+db.clearSync();
 
+console.log("В БД пусто!")
 })
 
 
@@ -52,13 +54,14 @@ test('testForState', async ({page}) => {
   const doc = await accessGooglesheet();
   const ReestrTable = doc.sheetsByIndex[0];
   const Reestr = await ReestrTable.getRows();
+  let currentPage = 1;
 
   const db = open({
     path: 'UniqueNums.db',
     compression: true,
   });
 
-  db.clearSync(); // УДАЛИТЬ ПРИ ДЕПЛОЕ!!!!!!!!
+  // db.clearSync(); // УДАЛИТЬ ПРИ ДЕПЛОЕ!!!!!!!!
 
   let nums = [];
   nums = await db.getRange().map(entry => entry.value).asArray;
@@ -97,7 +100,7 @@ test('testForState', async ({page}) => {
   await page.waitForResponse(r => r.status() === 200);
 
   //Пробегаем первую таблицу (50 - максимум)
-  for(let i=0;i<20;i++){
+  for(let i=0;i<50;i++){
     const num = await page.locator('tbody').locator('tr').nth(i).locator('td').nth(2).innerText();
     if(nums.find(numb => numb.trim() == num.trim())){
 
@@ -105,7 +108,7 @@ test('testForState', async ({page}) => {
     else{
       //Чекаем статус (Заморожен - не интересно, Новое - интересно, НапрНаВстИсп или Очерендник - заканчиваем упражнение)
       let status = await page.locator('tbody').locator('tr').nth(i).locator('td').nth(3).innerText();
-      if(status.trim() == "Заморожен"){    //ПРИ ДЕПЛОЕ ПОМЕНЯТЬ НА "Новое"   //Балуемся с карточкой заявления
+      if(status.trim() == "Новое"){    //ПРИ ДЕПЛОЕ ПОМЕНЯТЬ НА "Новое"   //Балуемся с карточкой заявления
         //Закинули Номер заявления в массив
         nums.push(num.trim());
         db.put(db.getCount(), num.trim());
@@ -174,10 +177,18 @@ test('testForState', async ({page}) => {
         
       }
       else if(status.trim() == "Направлен на вступительные испытания" || status.trim() == "Очередник"){
+        console.log(`Остановился на странице ${currentPage}`)
         break;
       }
       else{
+        
+      }
 
+      if(i==49){
+        await page.locator('.ui-iggrid-nextpagelabel').click();
+        await page.waitForResponse(r => r.status() === 200);
+        currentPage+=1;
+        i=0;
       }
       
       
