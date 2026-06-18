@@ -13,7 +13,7 @@ const secret = require('../secret.json');
 
 
 
-
+// Подключение к таблице Google-Диск
 async function accessGooglesheet() {
   // Настройка авторизации (Service Account)
   const serviceAccountAuth = new JWT({
@@ -25,31 +25,20 @@ async function accessGooglesheet() {
   const doc = new GoogleSpreadsheet('19yuMwx5M5dpWebENlgxKTvFlGipbouNJf_G7jKUjE24', serviceAccountAuth);
   await doc.loadInfo(); // Загружаем метаданные
   return doc;
-  const sheet = doc.sheetsByIndex[0]; // Берем первый лист
-
-  // ЧТЕНИЕ (быстро, без SheetJS)
-  const rows = await sheet.getRows(); 
-  console.log(rows[0].get('Name')); // Доступ к данным по заголовкам колонок
-
-  // ЗАПИСЬ (атомарно, без перезаписи файла)
-  await sheet.addRow({ Name: 'Ivan', Age: 28 });
 }
 
+// Для чистки БД
 test('clearDB', async ({page}) => {
-
-
-const db = open({
-  path: 'UniqueNums.db',
-  compression: true,
-});
-  
-db.clearSync();
-
-console.log("В БД пусто!")
+  const db = open({
+    path: 'UniqueNums.db',
+    compression: true,
+  });
+  db.clearSync();
+  console.log("В БД пусто!")
 })
 
-
-test('testForState', async ({page}) => {
+// Сам его величество тест который бегает по папкам
+test('testForState', async ({page}) => { 
 
   const doc = await accessGooglesheet();
   const ReestrTable = doc.sheetsByIndex[0];
