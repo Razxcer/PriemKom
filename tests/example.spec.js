@@ -27,15 +27,15 @@ async function accessGooglesheet() {
   return doc;
 }
 
-// Для чистки БД
-test('clearDB', async ({page}) => {
-  const db = open({
-    path: 'UniqueNums.db',
-    compression: true,
-  });
-  db.clearSync();
-  console.log("В БД пусто!")
-})
+//// Для чистки БД
+// test('clearDB', async ({page}) => {
+//   const db = open({
+//     path: 'UniqueNums.db',
+//     compression: true,
+//   });
+//   db.clearSync();
+//   console.log("В БД пусто!")
+// })
 
 // Сам его величество тест который бегает по папкам
 test('testForState', async ({page}) => { 
